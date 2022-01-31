@@ -77,13 +77,14 @@ class RegisterViewController: UIViewController {
         field.leftViewMode = .always
         field.backgroundColor = .white
         field.isSecureTextEntry = true
-        
+        field.textContentType = .oneTimeCode
+
         return field
     }()
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(systemName: "person.circle")
         imageView.tintColor = .gray
         imageView.contentMode = .scaleAspectFit
         imageView.layer.masksToBounds = true
@@ -202,17 +203,35 @@ class RegisterViewController: UIViewController {
             alertUserLoginError()
             return }
         
-        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
-            guard let result = authResult, error == nil else {
-                print("Error creating user")
-                return
-            }
+        // Firebase login
+        
+        DatabaseManager.shared.userExists(with: email, completion: { [weak self] exists in
+            guard let strongSelf = self else {
+                return }
             
-            let user = result.user
-            print("User: ", user)
+            guard !exists else {
+                // user already exists
+                strongSelf.alert(title: "uh oh..", message: "Looks like a user account for that email already exists")
+                return }
             
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
+                
+                guard let result = authResult, error == nil else {
+                    print("Error creating user")
+                    return
+                }
+                
+                DatabaseManager.shared.insertUser(with: chatAppUser(firstName: firstName,
+                                                                    lastName: lastName,
+                                                                    emailAdress: email))
+                
+                let user = result.user
+                print("User: ", user)
+                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                
+            })
         })
-
+        
     }
     
     
