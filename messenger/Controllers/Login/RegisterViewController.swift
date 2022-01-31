@@ -238,12 +238,6 @@ class RegisterViewController: UIViewController {
     @objc func alertUserLoginError(){
         alert(title: "Woops", message: "Please enter all the information to create a new account")
     }
-    
-    @objc private func didTapRegister() {
-        let vc = RegisterViewController()
-        vc.title = "Create account"
-        navigationController?.pushViewController(vc, animated: true)
-    }
 
 }
 

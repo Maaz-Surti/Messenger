@@ -14,13 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        FirebaseApp.configure()
         
-        do {
-          try Auth.auth().useUserAccessGroup("com.technostacks.messenger")
-        } catch let error as NSError {
-          print("Error changing user access group: %@", error)
-        }
+        FirebaseApp.configure()
         
         return true
     }
