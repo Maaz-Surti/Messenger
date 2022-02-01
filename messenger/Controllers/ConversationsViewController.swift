@@ -16,7 +16,7 @@ class ConversationsViewController: UIViewController {
     private let tableView: UITableView = {
         let table = UITableView()
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        table.isHidden = true
+        table.isHidden = false
         
         return table
     }()
@@ -34,6 +34,11 @@ class ConversationsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem:
+                                                                    .compose,
+                                                            target: self,
+                                                            action: #selector(didTapComposeButton))
+        
         // Adding subviews
         
         view.addSubview(tableView)
@@ -42,6 +47,21 @@ class ConversationsViewController: UIViewController {
         setupTableView()
         
     }
+    
+    @objc private func didTapComposeButton(){
+        
+        let vc = NewConversationViewController()
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .fullScreen
+        present(navVC, animated: true)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.frame = view.bounds
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     
@@ -77,6 +97,7 @@ extension ConversationsViewController: UITableViewDataSource, UITableViewDelegat
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = "Something Something"
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
     
@@ -84,5 +105,8 @@ extension ConversationsViewController: UITableViewDataSource, UITableViewDelegat
         tableView.deselectRow(at: indexPath, animated: true)
         
         let vc = ChatViewController()
+        vc.title = "Jenny Smith"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
