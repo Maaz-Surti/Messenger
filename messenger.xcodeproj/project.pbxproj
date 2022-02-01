@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B09CBE986065452D0131C725 /* Pods_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8D7518DAEA1157ADAC2E728 /* Pods_messenger.framework */; };
+		B6015A8427A93B00008C008C /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6015A8327A93B00008C008C /* ChatViewController.swift */; };
 		B6875DDE27A3BE1400C28AEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6875DDD27A3BE1400C28AEF /* AppDelegate.swift */; };
 		B6875DE027A3BE1400C28AEF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6875DDF27A3BE1400C28AEF /* SceneDelegate.swift */; };
 		B6875DE227A3BE1400C28AEF /* ConversationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6875DE127A3BE1400C28AEF /* ConversationsViewController.swift */; };
@@ -27,6 +28,7 @@
 
 /* Begin PBXFileReference section */
 		AD2362AD579BF4217118FF18 /* Pods-messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-messenger.debug.xcconfig"; path = "Target Support Files/Pods-messenger/Pods-messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		B6015A8327A93B00008C008C /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		B6875DDA27A3BE1400C28AEF /* messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6875DDD27A3BE1400C28AEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B6875DDF27A3BE1400C28AEF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 		B6875DF127A3C4C000C28AEF /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				B6015A8327A93B00008C008C /* ChatViewController.swift */,
 				B6875DE127A3BE1400C28AEF /* ConversationsViewController.swift */,
 				B6875E0327A3C9B800C28AEF /* Login */,
 				B6875E0127A3C72600C28AEF /* ProfileViewController.swift */,
@@ -188,6 +191,7 @@
 				B6875DD727A3BE1400C28AEF /* Frameworks */,
 				B6875DD827A3BE1400C28AEF /* Resources */,
 				3296350754CC91AC07B2FD57 /* [CP] Embed Pods Frameworks */,
+				61B5797DEBD1F87BF4F2618B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -263,6 +267,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-messenger/Pods-messenger-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		61B5797DEBD1F87BF4F2618B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-messenger/Pods-messenger-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-messenger/Pods-messenger-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-messenger/Pods-messenger-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9665B4C821C39ECAA5BDDA33 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -302,6 +323,7 @@
 				B6875DDE27A3BE1400C28AEF /* AppDelegate.swift in Sources */,
 				B6875E0227A3C72600C28AEF /* ProfileViewController.swift in Sources */,
 				B6875DE027A3BE1400C28AEF /* SceneDelegate.swift in Sources */,
+				B6015A8427A93B00008C008C /* ChatViewController.swift in Sources */,
 				B6875DFC27A3C6ED00C28AEF /* PhotoViewerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,6 +478,8 @@
 				DEVELOPMENT_TEAM = YQD4TX65A5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = messenger/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to take the profile picture";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Please allow access to select a photo for your profile";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -488,6 +512,8 @@
 				DEVELOPMENT_TEAM = YQD4TX65A5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = messenger/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to take the profile picture";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Please allow access to select a photo for your profile";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

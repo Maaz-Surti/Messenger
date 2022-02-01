@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseAuth
+import GoogleSignIn
 
 class ProfileViewController: UIViewController {
     
@@ -42,13 +43,17 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         tableView.deselectRow(at: indexPath, animated: true)
         
         let actionSheet = UIAlertController(title: "Are you sure you want to Log Out ?", message: "", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { [weak self] _ in
+            
+            // Google Log Out
+            GIDSignIn.sharedInstance().signOut()
             do {
                 guard let self = self else { return }
-                
+                // Firebase Log Out
                 try FirebaseAuth.Auth.auth().signOut()
                 let vc = LoginViewController()
                 let nav = UINavigationController(rootViewController: vc)

@@ -7,15 +7,16 @@
 
 import UIKit
 import Firebase
+import GoogleSignIn
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
-
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+        GIDSignIn.sharedInstance().delegate = self
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         
         return true
     }
@@ -34,6 +35,61 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        guard error == nil else {
+            if let error = error {
+                print("Failed to sign in with google: ", error)
+            }
+            return
+        }
+        
+        print("Did sign in with Google: ", user ?? "no usr")
+        
+        guard let user = user else { return }
+        
+        guard let email = user.profile.email,
+              let firstName = user.profile.givenName,
+              let lastName = user.profile.familyName else {
+                  return }
+        
+        
+        DatabaseManager.shared.userExists(with: email, completion: { exists in
+            if !exists {
+                // insert into database
+                DatabaseManager.shared.insertUser(with: chatAppUser(firstName: firstName,
+                                                                    lastName: lastName,
+                                                                    emailAdress: email))
+            }
+        })
+        
+        
+        guard let authentication = user.authentication else {
+            print("Missing auth object off of google user")
+            return }
+        
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
+        FirebaseAuth.Auth.auth().signIn(with: credential, completion: { authResult, error in
+            guard authResult != nil, error == nil else {
+                print("Failed to login with google credentials")
+                return }
+            print("successfully signed in with google credentials")
+            NotificationCenter.default.post(name: .didLogInNotification, object: nil)
+        })
+        
+        
+    }
+
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        print("Google user was disconnected")
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        return GIDSignIn.sharedInstance().handle(url)
+    }
+    
 
 }
 
