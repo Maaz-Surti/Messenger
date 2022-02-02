@@ -31,18 +31,26 @@ extension DatabaseManager{
         database.child(safeEmail).observeSingleEvent(of: .value, with: { snapshot in
             guard snapshot.value as? String != nil else {
                 completion(false)
-                return }
+                return
+            }
+            completion(true)
         })
 
-        completion(true)
+        
     }
     
     /// Inserts new user to database
-    public func insertUser(with user: chatAppUser){
+    public func insertUser(with user: chatAppUser, completion: @escaping (Bool) -> Void){
         database.child(user.safeEmail).setValue([
             "first_name" : user.firstName,
             "last_name" : user.lastName
-        ])
+        ], withCompletionBlock: { error, _ in
+            guard error == nil else {
+                print("Failed to write to the database")
+                return
+            }
+            completion(true)
+        })
     }
 }
 
@@ -55,5 +63,9 @@ struct chatAppUser {
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
         return safeEmail
     }
-//        let profilePictureURL: String
+    var profilePictureFilename: String {
+            //maaz-gmail-com_profile_picture.png
+            return "\(safeEmail)_profile_picture.png"
+    }
 }
+//        let profilePictureURL: String

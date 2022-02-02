@@ -119,7 +119,7 @@ class RegisterViewController: UIViewController {
 //                                                            target: self,
 //                                                            action: #selector(didTapRegister))
         
-        registerButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+        registerButton.addTarget(self, action: #selector(registerButtonTapped), for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
@@ -186,7 +186,7 @@ class RegisterViewController: UIViewController {
 
     }
     
-    @objc private func loginButtonTapped(){
+    @objc private func registerButtonTapped(){
         
         firstNameField.resignFirstResponder()
         lastNameField.resignFirstResponder()
@@ -211,15 +211,15 @@ class RegisterViewController: UIViewController {
         // Firebase login
         
         DatabaseManager.shared.userExists(with: email, completion: { [weak self] exists in
-            guard let strongSelf = self else {
+            guard let self = self else {
                 return }
             
             DispatchQueue.main.async {
-                strongSelf.spinner.dismiss(animated: true)
+                self.spinner.dismiss(animated: true)
             }
             guard !exists else {
                 // user already exists
-                strongSelf.alert(title: "uh oh..", message: "Looks like a user account for that email already exists")
+                self.alert(title: "uh oh..", message: "Looks like a user account for that email already exists")
                 return }
             
             FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
@@ -229,13 +229,36 @@ class RegisterViewController: UIViewController {
                     return
                 }
                 
-                DatabaseManager.shared.insertUser(with: chatAppUser(firstName: firstName,
-                                                                    lastName: lastName,
-                                                                    emailAdress: email))
+                let chatUser =  chatAppUser(firstName: firstName,
+                                            lastName: lastName,
+                                            emailAdress: email)
+                
+                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
+                    if success {
+                        // upload image
+                        guard let image = self.imageView.image,
+                        let data = image.pngData() else {
+                            print("Cannot get png data")
+                            return }
+                        let fileName = chatUser.profilePictureFilename
+                        StorageManager.shared.uploadProfilePicture(with: data,
+                                                                   fileName: fileName,
+                                                                   completion: { result in
+                            switch result {
+                            case .success(let downloadUrl):
+                                UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                print(downloadUrl)
+                            case .failure(let error):
+                                print("Storage Manager error", error)
+                            }
+                    
+                        })
+                    }
+                })
                 
                 let user = result.user
                 print("User: ", user)
-                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                self.navigationController?.dismiss(animated: true, completion: nil)
                 
             })
         })
@@ -254,7 +277,7 @@ extension RegisterViewController: UITextFieldDelegate {
         if textField == emailField{
             passwordField.becomeFirstResponder()
         } else if textField == passwordField {
-          loginButtonTapped()
+          registerButtonTapped()
         }
         
         return true

@@ -65,7 +65,7 @@ class ConversationsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     
-//        validateAuth()
+       validateAuth()
         
     }
     
@@ -74,11 +74,17 @@ class ConversationsViewController: UIViewController {
     }
     
     private func validateAuth(){
-        if FirebaseAuth.Auth.auth().currentUser == nil {
+        
+        var Handle = Auth.auth().addStateDidChangeListener { auth, user in
+            print("This is the user >>>>>>>>>>>>>>>>>>>", user ?? "No user found")
+            if Auth.auth().currentUser == nil {
+                
             let vc = LoginViewController()
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
-            present(nav, animated: false)
+            self.present(nav, animated: false)
+                
+            }
         }
     }
     
