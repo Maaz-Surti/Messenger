@@ -111,7 +111,7 @@ class RegisterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Login"
+        title = "Register"
         view.backgroundColor = .white
         
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",

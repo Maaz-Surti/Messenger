@@ -161,7 +161,7 @@ class LoginViewController: UIViewController {
      
             guard let strongSelf = self else {
                 return }
-            
+            UserDefaults.standard.set(email, forKey: "email")
             DispatchQueue.main.async {
                 strongSelf.spinner.dismiss(animated: true)
             }

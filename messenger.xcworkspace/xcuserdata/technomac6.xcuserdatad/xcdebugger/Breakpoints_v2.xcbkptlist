@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8D9102EE-D508-48EF-8F9A-16D49EB26998"
+            uuid = "10EBA128-7EAA-4EB5-BB9A-029D2DE7E927"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "messenger/Controllers/Login/RegisterViewController.swift"
+            filePath = "messenger/Controllers/Login/LoginViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
-            landmarkName = "registerButtonTapped()"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "loginButtonTapped()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
