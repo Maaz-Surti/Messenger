@@ -82,6 +82,7 @@ class LoginViewController: UIViewController {
         loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main,
                                                                using: { [weak self] _ in
             guard let self = self else { return }
+            self.spinner.dismiss(animated: true)
             self.navigationController?.dismiss(animated: true, completion: nil)
         })
         
@@ -176,8 +177,6 @@ class LoginViewController: UIViewController {
         })
 
     }
-    
-    // Firebase login
     
     @objc func alertUserLoginError(){
         alert(title: "Woops", message: "Please enter all the information")

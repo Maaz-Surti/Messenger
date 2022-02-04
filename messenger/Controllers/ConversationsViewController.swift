@@ -48,9 +48,27 @@ class ConversationsViewController: UIViewController {
         
     }
     
+    private func createNewConversation(result: [String: String]){
+        
+        guard let name = result["name"], let email = result["email"] else { return }
+        
+        let vc = ChatViewController(with: email)
+        vc.title = name
+        vc.isNewConversation = true
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     @objc private func didTapComposeButton(){
         
         let vc = NewConversationViewController()
+        vc.completion = { [weak self] result in
+            
+            guard let self = self else { return }
+            print("\(result)")
+            
+            self.createNewConversation(result: result)
+        }
         let navVC = UINavigationController(rootViewController: vc)
         navVC.modalPresentationStyle = .fullScreen
         present(navVC, animated: true)
@@ -71,18 +89,19 @@ class ConversationsViewController: UIViewController {
     
     private func fetchConversations(){
         
+        
     }
     
     private func validateAuth(){
         
-        var Handle = Auth.auth().addStateDidChangeListener { auth, user in
+        _ = Auth.auth().addStateDidChangeListener { auth, user in
             print("This is the user >>>>>>>>>>>>>>>>>>>", user ?? "No user found")
             if Auth.auth().currentUser == nil {
                 
-            let vc = LoginViewController()
-            let nav = UINavigationController(rootViewController: vc)
-            nav.modalPresentationStyle = .fullScreen
-            self.present(nav, animated: false)
+                let vc = LoginViewController()
+                let nav = UINavigationController(rootViewController: vc)
+                nav.modalPresentationStyle = .fullScreen
+                self.present(nav, animated: false)
                 
             }
         }
@@ -110,7 +129,7 @@ extension ConversationsViewController: UITableViewDataSource, UITableViewDelegat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let vc = ChatViewController()
+        let vc = ChatViewController(with: "sfja@gmail.com")
         vc.title = "Jenny Smith"
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)

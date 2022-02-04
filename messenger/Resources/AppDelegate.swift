@@ -9,6 +9,7 @@ import UIKit
 import Firebase
 import FirebaseCore
 import GoogleSignIn
+import JGProgressHUD
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
@@ -44,6 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             return
         }
         
+        let spinner = JGProgressHUD(style: .dark)
+        
         print("Did sign in with Google: ", user ?? "no usr")
         
         guard let user = user else { return }
@@ -52,6 +55,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
               let firstName = user.profile.givenName,
               let lastName = user.profile.familyName else {
                   return }
+        
+        UserDefaults.standard.set(email, forKey: "email")
         
         
         DatabaseManager.shared.userExists(with: email, completion: { exists in
@@ -62,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                                            lastName: lastName,
                                            emailAdress: email)
                 
-                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
+                    DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
                     
                     if success {
                         //upload image

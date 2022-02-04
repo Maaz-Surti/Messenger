@@ -258,6 +258,9 @@ class RegisterViewController: UIViewController {
                 
                 let user = result.user
                 print("User: ", user)
+                UserDefaults.standard.set(email, forKey: "email")
+                
+                
                 self.navigationController?.dismiss(animated: true, completion: nil)
                 
             })
