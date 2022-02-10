@@ -41,4 +41,5 @@ extension UIViewController{
 
 extension Notification.Name {
     static let didLogInNotification = Notification.Name("didLogInNotification")
+    static let didOpenTheApp = Notification.Name("didOpenTheApp")
 }

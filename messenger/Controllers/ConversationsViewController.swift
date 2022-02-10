@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import JGProgressHUD
+import SDWebImage
 
 struct Conversation {
     
@@ -28,6 +29,8 @@ class ConversationsViewController: UIViewController {
     private let spinner = JGProgressHUD(style: .dark)
     
     private  var conversations = [Conversation]()
+    
+    private var loginObserver: NSObjectProtocol?
     
     private let tableView: UITableView = {
         let table = UITableView()
@@ -63,11 +66,21 @@ class ConversationsViewController: UIViewController {
         setupTableView()
         startListeningForConversations()
         
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main,
+                                                               using: { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.startListeningForConversations()
+        })
     }
     
     private func startListeningForConversations(){
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
+        }
+        
+        if let observer = loginObserver {
+            NotificationCenter.default.removeObserver(observer)
         }
         
         print("starting conversations fetch...")
@@ -82,7 +95,7 @@ class ConversationsViewController: UIViewController {
                     return
                 }
                 self?.conversations = conversations
-                
+
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }
@@ -93,9 +106,10 @@ class ConversationsViewController: UIViewController {
         })
     }
     
-    private func createNewConversation(result: [String: String]){
+    private func createNewConversation(result: SearchResult){
         
-        guard let name = result["name"], let email = result["email"] else { return }
+        let name = result.name
+        let email = result.email
         
         let vc = ChatViewController(with: email, id: nil)
         vc.title = name
@@ -109,8 +123,9 @@ class ConversationsViewController: UIViewController {
         let vc = NewConversationViewController()
         vc.completion = { [weak self] result in
             
-            guard let self = self else { return }
-            print("\(result)")
+            guard let self = self else {
+                return
+            }
             
             self.createNewConversation(result: result)
         }
@@ -176,6 +191,10 @@ extension ConversationsViewController: UITableViewDataSource, UITableViewDelegat
         tableView.deselectRow(at: indexPath, animated: true)
         
         let model = conversations[indexPath.row]
+        openConversation(model)
+    }
+    
+    func openConversation(_ model: Conversation) {
         
         let vc = ChatViewController(with: model.otherUserEmail, id: model.id)
         vc.title = model.name
@@ -185,5 +204,27 @@ extension ConversationsViewController: UITableViewDataSource, UITableViewDelegat
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            //begin delete
+            let conversationID = conversations[indexPath.row].id
+            
+            tableView.beginUpdates()
+            
+            DatabaseManager.shared.deleteConversation(conversationID: conversationID, completion: { [weak self] success in
+                if success {
+                    self?.conversations.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .left)
+                }
+            })
+            tableView.endUpdates()
+            tableView.reloadRows(at: [indexPath], with: .left)
+        }
     }
 }

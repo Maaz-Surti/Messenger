@@ -11,6 +11,7 @@
 		B6015A8427A93B00008C008C /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6015A8327A93B00008C008C /* ChatViewController.swift */; };
 		B6015A8627A965AC008C008C /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6015A8527A965AC008C008C /* StorageManager.swift */; };
 		B65672BD27ACE8B1002D8575 /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65672BC27ACE8B0002D8575 /* ConversationTableViewCell.swift */; };
+		B67631D527B279EA00B4DB2F /* NewConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67631D427B279EA00B4DB2F /* NewConversationCell.swift */; };
 		B6875DDE27A3BE1400C28AEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6875DDD27A3BE1400C28AEF /* AppDelegate.swift */; };
 		B6875DE027A3BE1400C28AEF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6875DDF27A3BE1400C28AEF /* SceneDelegate.swift */; };
 		B6875DE227A3BE1400C28AEF /* ConversationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6875DE127A3BE1400C28AEF /* ConversationsViewController.swift */; };
@@ -33,6 +34,7 @@
 		B6015A8327A93B00008C008C /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		B6015A8527A965AC008C008C /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		B65672BC27ACE8B0002D8575 /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
+		B67631D427B279EA00B4DB2F /* NewConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationCell.swift; sourceTree = "<group>"; };
 		B6875DDA27A3BE1400C28AEF /* messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6875DDD27A3BE1400C28AEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B6875DDF27A3BE1400C28AEF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				B6875DF627A3C54400C28AEF /* Storyboards */,
+				B67631D427B279EA00B4DB2F /* NewConversationCell.swift */,
 				B65672BC27ACE8B0002D8575 /* ConversationTableViewCell.swift */,
 				B6875DE627A3BE1800C28AEF /* Assets.xcassets */,
 			);
@@ -320,6 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6875DF827A3C6C100C28AEF /* LoginViewController.swift in Sources */,
+				B67631D527B279EA00B4DB2F /* NewConversationCell.swift in Sources */,
 				B6D2F76E27A7B57F0023F6B1 /* DatabaseManager.swift in Sources */,
 				B6875DFA27A3C6CC00C28AEF /* RegisterViewController.swift in Sources */,
 				B6875E0027A3C71A00C28AEF /* NewConversationViewController.swift in Sources */,
@@ -487,6 +491,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = messenger/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to take the profile picture";
+				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Please allow access to microphone to send audio and video messages";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Please allow access to select a photo for your profile";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -521,6 +527,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = messenger/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Please allow access to take the profile picture";
+				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Please allow access to microphone to send audio and video messages";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Please allow access to select a photo for your profile";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

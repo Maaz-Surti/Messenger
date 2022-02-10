@@ -15,6 +15,9 @@ class ProfileViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     let data = ["Log Out"]
     
+    private var loginObserver: NSObjectProtocol?
+    private var openedObserver: NSObjectProtocol?
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -23,12 +26,33 @@ class ProfileViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableHeaderView = createTableHeader()
+        
+        
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main,
+                                                               using: { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.tableView.tableHeaderView = self.createTableHeader()
+        })
+        
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
     }
+    
+    deinit {
+        if let observer = loginObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        
+        if let observer = openedObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+    
     
     func createTableHeader()-> UIView? {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
@@ -74,6 +98,7 @@ class ProfileViewController: UIViewController {
         
         return headerView
     }
+    
     
     func downloadImage(imageView: UIImageView, url: URL){
         URLSession.shared.dataTask(with: url, completionHandler: { data, _, error in

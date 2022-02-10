@@ -161,7 +161,27 @@ class LoginViewController: UIViewController {
      
             guard let strongSelf = self else {
                 return }
+            
+            let safeEmail = DatabaseManager.safeEmail(email: email)
+            DatabaseManager.shared.getDataForPath(path: safeEmail, completion: { result in
+                switch result {
+                case .success(let data):
+                    guard let userData = data as? [String: Any],
+                          let firstName = userData["first_name"],
+                          let lastName = userData["last_name"] else {
+                              print("could not get the first and last name")
+                                return
+                            }
+                    UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+                    
+                case .failure(let error):
+                    print("Failed to read data with error: ", error)
+                }
+            })
+            
             UserDefaults.standard.set(email, forKey: "email")
+            
+                
             DispatchQueue.main.async {
                 strongSelf.spinner.dismiss(animated: true)
             }
@@ -174,6 +194,7 @@ class LoginViewController: UIViewController {
             let user = result.user
             print("Logged in user ", user)
             strongSelf.navigationController?.dismiss(animated: true)
+            NotificationCenter.default.post(name: .didLogInNotification, object: nil)
         })
 
     }

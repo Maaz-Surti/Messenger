@@ -44,8 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             }
             return
         }
-        
-        let spinner = JGProgressHUD(style: .dark)
+    
         
         print("Did sign in with Google: ", user ?? "no usr")
         
@@ -57,6 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                   return }
         
         UserDefaults.standard.set(email, forKey: "email")
+        UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
         
         
         DatabaseManager.shared.userExists(with: email, completion: { exists in
