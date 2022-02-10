@@ -109,13 +109,31 @@ class ConversationsViewController: UIViewController {
     private func createNewConversation(result: SearchResult){
         
         let name = result.name
-        let email = result.email
+        let email = DatabaseManager.safeEmail(email: result.email)
         
-        let vc = ChatViewController(with: email, id: nil)
-        vc.title = name
-        vc.isNewConversation = true
-        vc.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(vc, animated: true)
+        //check in the database if the conversation already exists
+        //if it does, reuse conversation id
+        //otherwise use existing code
+        
+        DatabaseManager.shared.conversationExists(with: email, completion: { [weak self] result in
+            switch result {
+            case .success(let conversationID):
+                let vc = ChatViewController(with: email, id: conversationID)
+                vc.title = name
+                vc.isNewConversation = false
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(vc, animated: true)
+                
+            case .failure(_):
+                let vc = ChatViewController(with: email, id: nil)
+                vc.title = name
+                vc.isNewConversation = true
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+        })
+        
+        
     }
     
     @objc private func didTapComposeButton(){
@@ -127,7 +145,22 @@ class ConversationsViewController: UIViewController {
                 return
             }
             
-            self.createNewConversation(result: result)
+            let currentConversations = self.conversations
+            if let targetConversation = currentConversations.first(where: {
+                $0.otherUserEmail == DatabaseManager.safeEmail(email: result.email )
+            }) {
+                let vc = ChatViewController(with: targetConversation.otherUserEmail, id: targetConversation.id)
+                vc.title = targetConversation.name
+                vc.isNewConversation = false
+                vc.navigationItem.largeTitleDisplayMode = .never
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                self.createNewConversation(result: result)
+            }
+                
+                
+            
+            
         }
         let navVC = UINavigationController(rootViewController: vc)
         navVC.modalPresentationStyle = .fullScreen

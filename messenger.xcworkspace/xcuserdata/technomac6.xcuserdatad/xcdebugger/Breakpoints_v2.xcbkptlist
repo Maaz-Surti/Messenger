@@ -7,65 +7,17 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "656D5A0A-6160-4654-982E-D8690089620A"
+            uuid = "6043CF50-675A-47D8-96B0-E95C25F278ED"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "messenger/Resources/DatabaseManager.swift"
+            filePath = "messenger/Controllers/LocationPickerViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "395"
-            endingLineNumber = "395"
-            landmarkName = "getAllMessagesForConversation(with:completion:)"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "viewDidLoad()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "0188C29B-A229-49C8-8EA3-65B445CCE585"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "messenger/Controllers/ChatViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
-            landmarkName = "init(with:id:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "0188C29B-A229-49C8-8EA3-65B445CCE585 - 4049d82c3dea8ea2"
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "messenger.ChatViewController.__allocating_init(with: Swift.String, id: Swift.Optional&lt;Swift.String&gt;) -&gt; messenger.ChatViewController"
-                  moduleName = "messenger"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/technomac6/Documents/_iphone%20Development/Maaz/messenger/messenger/Controllers/ChatViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "37">
-               </Location>
-               <Location
-                  uuid = "0188C29B-A229-49C8-8EA3-65B445CCE585 - e0b2d972ee8fcb67"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "messenger.ChatViewController.init(with: Swift.String, id: Swift.Optional&lt;Swift.String&gt;) -&gt; messenger.ChatViewController"
-                  moduleName = "messenger"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/technomac6/Documents/_iphone%20Development/Maaz/messenger/messenger/Controllers/ChatViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "75"
-                  endingLineNumber = "75"
-                  offsetFromSymbolStart = "201">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

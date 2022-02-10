@@ -9,6 +9,11 @@ import UIKit
 import FirebaseAuth
 import GoogleSignIn
 import CoreMedia
+import SDWebImage
+
+struct ProfileViewModel {
+    
+}
 
 class ProfileViewController: UIViewController {
     
@@ -83,13 +88,11 @@ class ProfileViewController: UIViewController {
         
         headerView.addSubview(imageView)
         
-        StorageManager.shared.downloadURL(for: path, completion: { [weak self] result in
-            
-            guard let self = self else { return }
+        StorageManager.shared.downloadURL(for: path, completion: {  result in
                 
             switch(result){
             case .success(let url):
-                self.downloadImage(imageView: imageView, url: url)
+                imageView.sd_setImage(with: url, completed: nil)
             case .failure(let error):
                 print("Failed to get download URL ", error )
             }
@@ -97,20 +100,6 @@ class ProfileViewController: UIViewController {
         
         
         return headerView
-    }
-    
-    
-    func downloadImage(imageView: UIImageView, url: URL){
-        URLSession.shared.dataTask(with: url, completionHandler: { data, _, error in
-            guard let data = data, error == nil else {
-                return
-            }
-            
-            DispatchQueue.main.async{
-                let image = UIImage(data: data)
-                imageView.image = image
-            }
-        }).resume()
     }
     
 }
