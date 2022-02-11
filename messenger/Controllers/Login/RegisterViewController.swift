@@ -222,23 +222,26 @@ class RegisterViewController: UIViewController {
                 self.alert(title: "uh oh..", message: "Looks like a user account for that email already exists")
                 return }
             
-            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { [weak self] authResult, error in
                 
                 guard let result = authResult, error == nil else {
                     print("Error creating user", error as Any)
                     return
                 }
                 
+                // Caching their username and email
+                
                 UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
+                UserDefaults.standard.set(email, forKey: "email")
                 
                 let chatUser =  chatAppUser(firstName: firstName,
                                             lastName: lastName,
                                             emailAdress: email)
                 
-                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
+                DatabaseManager.shared.insertUser(with: chatUser, completion: { [weak self] success in
                     if success {
                         // upload image
-                        guard let image = self.imageView.image,
+                        guard let image = self?.imageView.image,
                         let data = image.pngData() else {
                             print("Cannot get png data")
                             return }
@@ -260,10 +263,10 @@ class RegisterViewController: UIViewController {
                 
                 let user = result.user
                 print("User: ", user)
-                UserDefaults.standard.set(email, forKey: "email")
                 
                 
-                self.navigationController?.dismiss(animated: true, completion: nil)
+                
+                self?.navigationController?.dismiss(animated: true, completion: nil)
                 
             })
         })

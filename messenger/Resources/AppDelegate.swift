@@ -19,7 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         FirebaseApp.configure()
         GIDSignIn.sharedInstance().delegate = self
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        FirebaseConfiguration.shared.setLoggerLevel(FirebaseLoggerLevel.min)
         
+        // App opened notification
+        NotificationCenter.default.post(name: .didOpenTheApp, object: nil)
         return true
     }
 

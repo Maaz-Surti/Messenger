@@ -11,28 +11,77 @@ import GoogleSignIn
 import CoreMedia
 import SDWebImage
 
+enum ProfileViewModelType{
+    case info, logout
+}
+
 struct ProfileViewModel {
-    
+    let viewModelType: ProfileViewModelType
+    let title: String
+    let handler: (() -> Void)?
 }
 
 class ProfileViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
-    let data = ["Log Out"]
+    var data = [ProfileViewModel]()
     
     private var loginObserver: NSObjectProtocol?
-    private var openedObserver: NSObjectProtocol?
+    private var appOpenedObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        data.append(ProfileViewModel(viewModelType: .info,
+                                     title: "Name: \(UserDefaults.standard.value(forKey: "name") as? String ?? "No Name")",
+                                     handler: nil ))
+        data.append(ProfileViewModel(viewModelType: .info,
+                                     title: "Email: \(UserDefaults.standard.value(forKey: "email") as? String ?? "No email")",
+                                     handler: nil ))
+        data.append(ProfileViewModel(viewModelType: .logout,
+                                     title: "Log Out",
+                                     handler: { [weak self]  in
+            guard let self = self else { return }
+            
+            UserDefaults.standard.setValue(nil, forKey: "email")
+            UserDefaults.standard.setValue(nil, forKey: "name")
+            
+            // Log out button
+            
+            let actionSheet = UIAlertController(title: "Are you sure you want to Log Out ?", message: "", preferredStyle: .actionSheet)
+            
+            let logOut = UIAlertAction(title: "Log Out", style: .destructive, handler: { [weak self] _ in
+                
+                // Google Log Out
+                GIDSignIn.sharedInstance().signOut()
+                
+                // Firebase Log Out
+                do {
+                    guard let self = self else { return }
+                    try FirebaseAuth.Auth.auth().signOut()
+                    let vc = LoginViewController()
+                    let nav = UINavigationController(rootViewController: vc)
+                    nav.modalPresentationStyle = .fullScreen
+                    self.present(nav, animated: true)
+                    
+                } catch {
+                    print("Failed to log out")
+                }
+            })
+            actionSheet.addAction(logOut)
+            
+            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            self.present(actionSheet, animated: true)
+            
+        } ))
+        
+        
+        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.tableHeaderView = createTableHeader()
-        
-        
+    
         loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main,
                                                                using: { [weak self] _ in
             guard let self = self else { return }
@@ -40,6 +89,12 @@ class ProfileViewController: UIViewController {
             self.tableView.tableHeaderView = self.createTableHeader()
         })
         
+        appOpenedObserver = NotificationCenter.default.addObserver(forName: .didOpenTheApp, object: nil, queue: .main,
+                                                               using: { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.tableView.tableHeaderView = self.createTableHeader()
+        })
         
     }
     
@@ -53,7 +108,7 @@ class ProfileViewController: UIViewController {
             NotificationCenter.default.removeObserver(observer)
         }
         
-        if let observer = openedObserver {
+        if let observer = appOpenedObserver {
             NotificationCenter.default.removeObserver(observer)
         }
     }
@@ -113,11 +168,10 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = data[indexPath.row]
-        cell.textLabel?.textColor = .red
-        cell.textLabel?.textAlignment = .center
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: ProfileTableViewCell.identifier,
+                                                 for: indexPath) as! ProfileTableViewCell
+        let viewModel = data[indexPath.row]
+        cell.setup(with: viewModel)
         return cell
     }
     
@@ -125,27 +179,26 @@ extension ProfileViewController: UITableViewDataSource, UITableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let actionSheet = UIAlertController(title: "Are you sure you want to Log Out ?", message: "", preferredStyle: .actionSheet)
-        actionSheet.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { [weak self] _ in
-            
-            // Google Log Out
-            GIDSignIn.sharedInstance().signOut()
-            do {
-                guard let self = self else { return }
-                // Firebase Log Out
-                try FirebaseAuth.Auth.auth().signOut()
-                let vc = LoginViewController()
-                let nav = UINavigationController(rootViewController: vc)
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true)
-                
-            } catch {
-                print("Failed to log out")
-            }
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(actionSheet, animated: true)
-        
+        data[indexPath.row].handler?()
         
       }
+}
+
+class ProfileTableViewCell: UITableViewCell {
+    static let identifier = "ProfileTableViewCell"
+    
+    public func setup(with viewModel: ProfileViewModel){
+        self.textLabel?.text = viewModel.title
+        switch viewModel.viewModelType {
+        case .info:
+            self.textLabel?.textAlignment = .left
+            self.selectionStyle = .none
+        case .logout:
+            
+            self.textLabel?.textColor = .red
+            self.textLabel?.textAlignment = .center
+            self.textLabel?.font = .systemFont(ofSize: 24, weight: .medium)
+            
+        }
+    }
 }

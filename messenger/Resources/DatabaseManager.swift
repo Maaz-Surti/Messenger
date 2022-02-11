@@ -49,7 +49,6 @@ extension DatabaseManager{
         let safeEmail = DatabaseManager.safeEmail(email: email)
         
         database.child(safeEmail).observeSingleEvent(of: .value, with: { snapshot in
-            print(snapshot.value as? [String: Any])
             guard snapshot.value as? [String: Any] != nil else {
                 print("User does not exist")
                 completion(false)
@@ -74,7 +73,7 @@ extension DatabaseManager{
                 return
             }
             
-            self.database.child("users").observeSingleEvent(of: .value, with: { snapshot in
+            self.database.child("users").observeSingleEvent(of: .value, with: { [weak self]snapshot in
                 if var userCollection = snapshot.value as? [[String:String]] {
                     //append to user dictionary
                     let newElement = [
@@ -84,7 +83,7 @@ extension DatabaseManager{
                     
                     userCollection.append(newElement)
                     
-                    self.database.child("users").setValue(userCollection, withCompletionBlock: { error, _ in
+                    self?.database.child("users").setValue(userCollection, withCompletionBlock: { error, _ in
                         guard error == nil else {
                             completion(false)
                             return
@@ -100,7 +99,7 @@ extension DatabaseManager{
                         ]
                     ]
                     
-                    self.database.child("users").setValue(newCollection, withCompletionBlock: { error, _ in
+                    self?.database.child("users").setValue(newCollection, withCompletionBlock: { error, _ in
                         guard error == nil else {
                             completion(false)
                             return

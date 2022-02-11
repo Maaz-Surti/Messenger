@@ -194,7 +194,11 @@ class LoginViewController: UIViewController {
             let user = result.user
             print("Logged in user ", user)
             strongSelf.navigationController?.dismiss(animated: true)
-            NotificationCenter.default.post(name: .didLogInNotification, object: nil)
+            
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .didLogInNotification, object: nil)
+            }
+           
         })
 
     }

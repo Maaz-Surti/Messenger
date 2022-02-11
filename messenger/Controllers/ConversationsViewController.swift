@@ -62,15 +62,16 @@ class ConversationsViewController: UIViewController {
         
         view.addSubview(tableView)
         view.addSubview(noConversationLabel)
-        fetchConversations()
         setupTableView()
         startListeningForConversations()
-        
+           
         loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main,
                                                                using: { [weak self] _ in
             guard let self = self else { return }
             
             self.startListeningForConversations()
+            
+           
         })
     }
     
@@ -92,8 +93,12 @@ class ConversationsViewController: UIViewController {
             case .success(let conversations):
                 print("successfully got conversation models")
                 guard !conversations.isEmpty else {
+                    self?.tableView.isHidden = true
+                    self?.noConversationLabel.isHidden = false
                     return
                 }
+                self?.noConversationLabel.isHidden = true
+                self?.tableView.isHidden = false
                 self?.conversations = conversations
 
                 DispatchQueue.main.async {
@@ -101,6 +106,9 @@ class ConversationsViewController: UIViewController {
                 }
                 
             case .failure(let error):
+                self?.tableView.isHidden = true
+                self?.noConversationLabel.isHidden = false
+                
                 print("failed to get convos: ",error)
             }
         })
@@ -171,6 +179,10 @@ class ConversationsViewController: UIViewController {
         super.viewDidLayoutSubviews()
         
         tableView.frame = view.bounds
+        noConversationLabel.frame = CGRect(x: 10,
+                                           y: (view.height-100)/2,
+                                           width: view.width - 20,
+                                           height: 100)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -179,11 +191,7 @@ class ConversationsViewController: UIViewController {
        validateAuth()
         
     }
-    
-    private func fetchConversations(){
-        
-        
-    }
+
     
     private func validateAuth(){
         
