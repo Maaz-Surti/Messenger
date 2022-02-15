@@ -12,7 +12,7 @@ import GoogleSignIn
 import JGProgressHUD
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+class AppDelegate: UIResponder {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -40,6 +40,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
+  
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        return GIDSignIn.sharedInstance().handle(url)
+    }
+    
+}
+
+// MARK: Google Sign In Functions
+
+extension AppDelegate: UIApplicationDelegate, GIDSignInDelegate {
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
         guard error == nil else {
             if let error = error {
@@ -55,8 +67,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         guard let email = user.profile.email,
               let firstName = user.profile.givenName,
-              let lastName = user.profile.familyName else {
-                  return }
+              let lastName = user.profile.familyName
+        else {
+                  return
+        }
         
         UserDefaults.standard.set(email, forKey: "email")
         UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
@@ -68,7 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 
                 let chatUser = chatAppUser(firstName: firstName,
                                            lastName: lastName,
-                                           emailAdress: email)
+                                           emailAdress: email, groupID: nil)
                 
                     DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
                     
@@ -123,12 +137,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
         print("Google user was disconnected")
     }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        
-        return GIDSignIn.sharedInstance().handle(url)
-    }
-    
-
 }
-

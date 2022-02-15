@@ -13,63 +13,7 @@ import AVFoundation
 import AVKit
 import CoreLocation
 
-struct Message: MessageType {
-    public var sender: SenderType
-    public var messageId: String
-    public var sentDate: Date
-    public var kind: MessageKind
-}
-
-struct Location: LocationItem {
-    var location: CLLocation
-    var size: CGSize
-
-}
-
-extension MessageKind {
-    var messageKindString: String {
-        switch self {
-            
-        case .text(_):
-            return "text"
-        case .attributedText(_):
-            return "attributedText"
-        case .photo(_):
-            return "Photo"
-        case .video(_):
-            return "video"
-        case .location(_):
-            return "location"
-        case .emoji(_):
-            return "emoji"
-        case .audio(_):
-            return "audio"
-        case .contact(_):
-            return "contact"
-        case .linkPreview(_):
-            return "linkPreview"
-        case .custom(_):
-            return "custom"
-        }
-    }
-}
-
-struct Media: MediaItem{
-    
-    var url: URL?
-    var image: UIImage?
-    var placeholderImage: UIImage
-    var size: CGSize
-}
-
-struct Sender: SenderType{
-    
-    public var senderId: String
-    public var displayName: String
-    public var photoURL: String
-}
-
-class ChatViewController: MessagesViewController {
+final class ChatViewController: MessagesViewController {
     
     public static var dateFormatter : DateFormatter  {
         let formatter = DateFormatter()
@@ -573,7 +517,7 @@ extension ChatViewController: MessageCellDelegate {
             let coordinates = locationData.location.coordinate
             let vc = LocationPickerViewController(coordinates: coordinates)
             vc.title = "Location"
-     
+            
             self.navigationController?.pushViewController(vc, animated: true)
         default:
             break
@@ -594,7 +538,7 @@ extension ChatViewController: MessageCellDelegate {
         
         if sender.senderId == selfSender?.senderId {
             //show our image
-            if let currentUserImage = self.senderPhotoURL {
+            if let currentUserImage = senderPhotoURL {
                 avatarView.sd_setImage(with: currentUserImage, completed: nil)
             }
             else {
@@ -605,9 +549,10 @@ extension ChatViewController: MessageCellDelegate {
                 let path = "images/\(safeEmail)_profile_picture.png"
                 
                 StorageManager.shared.downloadURL(for: path, completion: { [weak self] result in
+                    guard let self = self else { return }
                     switch result {
                     case.success(let url):
-                        self?.senderPhotoURL = url
+                        self.senderPhotoURL = url
                         DispatchQueue.main.async {
                             avatarView.sd_setImage(with: url, completed: nil)
                         }
@@ -620,8 +565,10 @@ extension ChatViewController: MessageCellDelegate {
         }
         else {
             // show other user image
-            
-            if let otherUserImageURL = self.otherUserPhotoURL {
+            if let otherUserPhotoURL = otherUserPhotoURL{
+                print(otherUserPhotoURL)
+            }
+            if let otherUserImageURL = otherUserPhotoURL {
                 avatarView.sd_setImage(with: otherUserImageURL, completed: nil)
             }
             else {
@@ -632,9 +579,11 @@ extension ChatViewController: MessageCellDelegate {
                 let path = "images/\(safeEmail)_profile_picture.png"
                 
                 StorageManager.shared.downloadURL(for: path, completion: { [weak self] result in
+                    
+                    guard let self = self else { return }
                     switch result {
                     case.success(let url):
-                        self?.otherUserPhotoURL = url
+                        self.otherUserPhotoURL = url
                         DispatchQueue.main.async {
                             avatarView.sd_setImage(with: url, completed: nil)
                         }

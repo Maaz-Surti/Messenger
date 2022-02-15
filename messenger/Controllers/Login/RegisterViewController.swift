@@ -9,6 +9,14 @@ import UIKit
 import FirebaseAuth
 import JGProgressHUD
 
+enum Groups: String, CaseIterable {
+    
+    case UVCeed
+    case FanPopz
+    case SmokeDetector
+    case SkyVue
+}
+
 class RegisterViewController: UIViewController {
 
     private let spinner = JGProgressHUD(style: .dark)
@@ -34,6 +42,8 @@ class RegisterViewController: UIViewController {
         
         return field
     }()
+    
+    private let pickerView = UIPickerView()
     
     private let lastNameField: UITextField = {
         let field = UITextField()
@@ -96,6 +106,24 @@ class RegisterViewController: UIViewController {
         return imageView
     }()
     
+    private let groupField: UITextField = {
+        let field = UITextField()
+        field.autocapitalizationType = .none
+        field.autocorrectionType = .no
+        field.returnKeyType = .continue
+        field.layer.cornerRadius = 12
+        field.layer.borderWidth = 1
+        field.layer.borderColor = UIColor.lightGray.cgColor
+        field.placeholder = "Group"
+        field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 7, height: 0))
+        field.leftViewMode = .always
+        field.backgroundColor = .secondarySystemBackground
+        field.tintColor = UIColor.clear
+        
+        return field
+    }()
+
+    
     private let registerButton: UIButton = {
         let button = UIButton()
         button.setTitle("Register", for: .normal)
@@ -107,6 +135,12 @@ class RegisterViewController: UIViewController {
         button.titleLabel?.textColor = .white
         return button
     }()
+    
+    private var groups: [String] {
+        return Groups.allCases.map { $0.rawValue }
+    }
+    
+    private var groupID = Int()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,6 +157,10 @@ class RegisterViewController: UIViewController {
         
         emailField.delegate = self
         passwordField.delegate = self
+        groupField.delegate = self
+        pickerView.dataSource = self
+        pickerView.delegate = self
+        groupField.inputView = pickerView
         
         
         // Add subviews
@@ -133,12 +171,14 @@ class RegisterViewController: UIViewController {
         scrollView.addSubview(emailField)
         scrollView.addSubview(passwordField)
         scrollView.addSubview(registerButton)
+        scrollView.addSubview(groupField)
         
         imageView.isUserInteractionEnabled = true
         
         let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapChangeProfilePic))
         gesture.numberOfTouchesRequired = 1
         imageView.addGestureRecognizer(gesture)
+
         
     }
     
@@ -170,8 +210,14 @@ class RegisterViewController: UIViewController {
                                  y: firstNameField.bottom + 10,
                                  width: scrollView.width - 60,
                                  height: 52)
-        emailField.frame = CGRect(x: 30,
+        
+        groupField.frame = CGRect(x: 30,
                                  y: lastNameField.bottom + 10,
+                                 width: scrollView.width - 60,
+                                 height: 52)
+        
+        emailField.frame = CGRect(x: 30,
+                                 y: groupField.bottom + 10,
                                  width: scrollView.width - 60,
                                  height: 52)
         passwordField.frame = CGRect(x: 30,
@@ -234,9 +280,14 @@ class RegisterViewController: UIViewController {
                 UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
                 UserDefaults.standard.set(email, forKey: "email")
                 
+                guard let groupID = self?.groupID else {
+                    print("Could not get the group ID")
+                    return
+                }
+                
                 let chatUser =  chatAppUser(firstName: firstName,
                                             lastName: lastName,
-                                            emailAdress: email)
+                                            emailAdress: email, groupID: String(groupID))
                 
                 DatabaseManager.shared.insertUser(with: chatUser, completion: { [weak self] success in
                     if success {
@@ -277,20 +328,11 @@ class RegisterViewController: UIViewController {
     @objc func alertUserLoginError(){
         alert(title: "Woops", message: "Please enter all the information to create a new account")
     }
+    
 
 }
 
-extension RegisterViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == emailField{
-            passwordField.becomeFirstResponder()
-        } else if textField == passwordField {
-          registerButtonTapped()
-        }
-        
-        return true
-    }
-}
+// MARK: Image Picker Functions
 
 extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
@@ -337,4 +379,65 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
+}
+
+// MARK: Pickerview
+
+extension RegisterViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return groups.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        if row == 0 {
+            groupID = 0
+            groupField.text = Groups.UVCeed.rawValue
+        } else if row == 1 {
+            groupID = 1
+            groupField.text = Groups.FanPopz.rawValue
+        }  else if row == 2 {
+            groupID = 2
+            groupField.text = Groups.SmokeDetector.rawValue
+        }  else if row == 3 {
+            groupID = 3
+            groupField.text = Groups.SkyVue.rawValue
+        }
+        self.view.endEditing(true)
+        print(groupID)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return groups[row]
+    }
+    
+    
+}
+
+// MARK: Text field extension
+
+extension RegisterViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == emailField{
+            passwordField.becomeFirstResponder()
+        } else if textField == passwordField {
+          registerButtonTapped()
+        }
+        
+        return true
+    }
+                
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+       
+        if textField == groupField {
+            return false
+        }
+        
+        return true
+    }
+    
 }

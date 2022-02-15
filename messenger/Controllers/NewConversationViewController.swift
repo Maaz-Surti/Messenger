@@ -140,6 +140,7 @@ extension NewConversationViewController: UISearchBarDelegate {
                 switch results {
                 case .success(let userCollection):
                     self.users = userCollection
+                    print(userCollection)
                     self.hasFetched = true
                     self.filterUsers(with: Query)
                     
@@ -203,8 +204,3 @@ extension NewConversationViewController: UISearchBarDelegate {
     }
 }
 
-struct SearchResult {
-    let name: String
-    let email: String
-    
-}

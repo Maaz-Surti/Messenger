@@ -11,11 +11,16 @@ import CoreMedia
 import MessageKit
 import CoreLocation
 
+
+///Manager object to read and write data to real time firebase database
 final class DatabaseManager {
     
+    ///Shared instance of class
     static let shared = DatabaseManager()
     
     private let database = Database.database().reference()
+    
+    private init() {}
     
     static func safeEmail(email: String) -> String {
         var safeEmail = email.replacingOccurrences(of: ".", with: "-")
@@ -27,6 +32,8 @@ final class DatabaseManager {
 }
 
 extension DatabaseManager {
+    
+    /// Returns dictionary node at child path
     public func getDataForPath(path: String, completion: @escaping (Result<Any, Error>) -> Void){
         self.database.child("\(path)").observeSingleEvent(of: .value, with: { snapshot in
             guard let value = snapshot.value else {
@@ -42,7 +49,10 @@ extension DatabaseManager {
 
 extension DatabaseManager{
     
-    
+    /// Checks if user exists for given email
+    /// Parameters
+    /// - `email`:             Target email to be checked
+    /// - `completion`:  Async closure to return with result
     public func userExists(with email: String,
                            completion: @escaping((Bool) -> Void)) {
         
@@ -73,12 +83,15 @@ extension DatabaseManager{
                 return
             }
             
+            guard let groupID = user.groupID else { return }
+            
             self.database.child("users").observeSingleEvent(of: .value, with: { [weak self]snapshot in
                 if var userCollection = snapshot.value as? [[String:String]] {
                     //append to user dictionary
                     let newElement = [
                             "name": user.firstName + " " + user.lastName,
-                            "email": user.safeEmail
+                            "email": user.safeEmail,
+                            "groupID": groupID
                     ]
                     
                     userCollection.append(newElement)
@@ -110,7 +123,7 @@ extension DatabaseManager{
              })
          })
       }
-    
+    /// Gets all users from database
     public func getAllUsers(completion: @escaping (Result<[[String:String]], Error>) -> Void ){
         database.child("users").observeSingleEvent(of: .value, with: { snapshot in
             guard let value = snapshot.value as? [[String:String]] else {
@@ -773,6 +786,7 @@ struct chatAppUser {
     let firstName: String
     let lastName: String
     let emailAdress: String
+    let groupID: String?
     var safeEmail: String {
         var safeEmail = emailAdress.replacingOccurrences(of: ".", with: "-")
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
